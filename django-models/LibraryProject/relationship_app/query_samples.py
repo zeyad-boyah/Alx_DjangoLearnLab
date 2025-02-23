@@ -14,14 +14,9 @@ def list_books_in_library(library_name):
         return None
 
 def get_librarian_for_library(library_name):
-  
-    try:
-        library = models.Library.objects.get(name=library_name)
-        return library.librarian  # Access the OneToOneField relation
-    except models.Library.DoesNotExist:
-        return None
-    except models.Librarian.DoesNotExist:
-        return None
+    library = models.Library.objects.get(name=library_name)
+    librarian = models.Librarian.objects.get(library=library)
+    return librarian
 
 # Example usage:
 if __name__ == '__main__':
