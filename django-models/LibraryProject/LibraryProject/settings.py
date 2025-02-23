@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "bookshelf.apps.BookshelfConfig",
-    "relationship_app.apps.RelationshipAppConfig"
+    "relationship_app.apps.RelationshipAppConfig",
 ]
 
 MIDDLEWARE = [
@@ -76,13 +76,13 @@ WSGI_APPLICATION = "LibraryProject.wsgi.application"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'Django_Library',
-        'USER': 'root',
-        'PASSWORD': 'Github_password_69',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "Django_Library",
+        "USER": "root",
+        "PASSWORD": "Github_password_69",
+        "HOST": "127.0.0.1",
+        "PORT": "3306",
     }
 }
 
@@ -121,7 +121,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
