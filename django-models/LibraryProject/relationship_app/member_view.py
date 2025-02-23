@@ -6,4 +6,4 @@ def is_member(user):
 
 @user_passes_test(is_member, login_url='/login/')
 def member_view(request):
-    return render(request, 'relationship_app/member.html')
+    return render(request, 'relationship_app/member_view.html')

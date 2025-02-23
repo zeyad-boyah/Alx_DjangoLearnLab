@@ -6,4 +6,4 @@ def is_admin(user):
 
 @user_passes_test(is_admin, login_url='/login/')
 def admin_view(request):
-    return render(request, 'relationship_app/admin.html')
+    return render(request, 'relationship_app/admin_view.html')
