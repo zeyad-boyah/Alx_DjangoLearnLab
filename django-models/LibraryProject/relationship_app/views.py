@@ -2,7 +2,7 @@ from django.shortcuts import render
 from .models import Library, Book
 from django.views.generic.detail import DetailView
 
-def book_list (request):
+def list_books (request):
     books = Book.objects.all()
     return render(request, template_name='relationship_app/list_books.html', context={'books': books})
 
