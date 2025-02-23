@@ -28,43 +28,62 @@ class LibraryDetailView(DetailView):
 
 
 def register(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('all_books')  
+            return redirect("all_books")
     else:
         form = UserCreationForm()
-    return render(request, 'relationship_app/register.html', {'form': form})
+    return render(request, "relationship_app/register.html", {"form": form})
 
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
-        UserProfile.objects.create(user=instance, role='Member')
+        UserProfile.objects.create(user=instance, role="Member")
+
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.userprofile.save()
 
-def is_admin(user):
-    return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Admin'
 
-@user_passes_test(is_admin, login_url='/login/')
+def is_admin(user):
+    return (
+        user.is_authenticated
+        and hasattr(user, "userprofile")
+        and user.userprofile.role == "Admin"
+    )
+
+
+@user_passes_test(is_admin, login_url="/login/")
 def admin_view(request):
-    return render(request, 'relationship_app/admin_view.html')
+    return render(request, "relationship_app/admin_view.html")
+
 
 def is_librarian(user):
-    return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Librarian'
+    return (
+        user.is_authenticated
+        and hasattr(user, "userprofile")
+        and user.userprofile.role == "Librarian"
+    )
 
-@user_passes_test(is_librarian, login_url='/login/')
+
+@user_passes_test(is_librarian, login_url="/login/")
 def librarian_view(request):
-    return render(request, 'relationship_app/librarian_view.html')
+    return render(request, "relationship_app/librarian_view.html")
+
 
 def is_member(user):
-    return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Member'
+    return (
+        user.is_authenticated
+        and hasattr(user, "userprofile")
+        and user.userprofile.role == "Member"
+    )
 
-@user_passes_test(is_member, login_url='/login/')
+
+@user_passes_test(is_member, login_url="/login/")
 def member_view(request):
-    return render(request, 'relationship_app/member_view.html')
+    return render(request, "relationship_app/member_view.html")
