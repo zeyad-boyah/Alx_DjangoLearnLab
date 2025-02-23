@@ -4,6 +4,7 @@ from django.views.generic.detail import DetailView
 from django.urls import reverse_lazy
 from django.views.generic.edit import FormView
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
 
 
 def list_books(request):
@@ -29,5 +30,6 @@ class RegisterView(FormView):
     success_url = reverse_lazy('login')  
 
     def form_valid(self, form):
-        form.save()  # create the user
+        user = form.save()  # create the user
+        login(self.request, user)
         return super().form_valid(form)
