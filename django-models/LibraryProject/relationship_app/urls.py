@@ -1,5 +1,11 @@
 from django.urls import path
-from .views import list_books, LibraryDetailView, admin_view, librarian_view, member_view
+from .views import (
+    list_books,
+    LibraryDetailView,
+    admin_view,
+    librarian_view,
+    member_view,
+)
 from . import (
     views,
 )  # this is imported again even though it is not needed, to satisfy the checker
