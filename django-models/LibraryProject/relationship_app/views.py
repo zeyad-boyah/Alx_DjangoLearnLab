@@ -50,6 +50,7 @@ def register(request):
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         profile = UserProfile.objects.create(user=instance, role="Member")
+        profile.assign_user_group()
         user_profile_created.send(sender=UserProfile, user_profile=profile)
 
 
@@ -63,7 +64,7 @@ def add_book(request):
         form = BookForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect("list_books")
+            return redirect("all_books")
     else:
         form = BookForm()
     return render(request, "relationship_app/add_book.html", {"form": form})
@@ -76,7 +77,7 @@ def edit_book(request, pk):
         form = BookForm(request.POST, instance=book)
         if form.is_valid():
             form.save()
-            return redirect("list_books")
+            return redirect("all_books")
     else:
         form = BookForm(instance=book)
     return render(request, "relationship_app/edit_book.html", {"form": form, "book": book})
@@ -87,7 +88,7 @@ def delete_book(request, pk):
     book = get_object_or_404(Book, pk=pk)
     if request.method == "POST":
         book.delete()
-        return redirect("list_books")
+        return redirect("all_books")
     return render(request, "relationship_app/delete_book.html", {"book": book})
 
 

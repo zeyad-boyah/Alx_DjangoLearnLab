@@ -61,5 +61,14 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
 
+    def assign_user_group(self):
+        if self.role == "Admin":
+            group = Group.objects.get(name="Admin")
+        elif self.role == "Librarian":
+            group = Group.objects.get(name="Librarian")
+        elif self.role == "Member":
+            group = Group.objects.get(name="Member")
+        self.user.groups.add(group)
+
     def __str__(self):
         return f"{self.user.username} - {self.role}"
