@@ -8,6 +8,11 @@ from django.contrib.auth.decorators import user_passes_test
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.shortcuts import render
+from django.dispatch import Signal
+
+# testing signals by sending one to user_profile.save
+# this is far from the best approach but was done to test the signals framework 
+user_profile_created = Signal()
 
 
 def list_books(request):
@@ -42,12 +47,13 @@ def register(request):
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
-        UserProfile.objects.create(user=instance, role="Member")
+        profile = UserProfile.objects.create(user=instance, role="Member")
+        user_profile_created.send(sender=UserProfile, user_profile=profile)
 
 
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    instance.userprofile.save()
+@receiver(user_profile_created)
+def save_user_profile(sender, user_profile, **kwargs):
+    user_profile.save()
 
 
 def is_admin(user):
