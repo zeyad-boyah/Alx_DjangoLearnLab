@@ -6,7 +6,7 @@ from django.views.generic.detail import DetailView
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import user_passes_test ,permission_required
+from django.contrib.auth.decorators import permission_required, user_passes_test
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
