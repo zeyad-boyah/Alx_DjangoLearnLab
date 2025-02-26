@@ -15,9 +15,9 @@ from . import (
 from django.contrib.auth.views import LoginView, LogoutView
 
 urlpatterns = [
-    path("books/add/", add_book, name="add_book"),
-    path("books/<int:pk>/edit/", edit_book, name="edit_book"),
-    path("books/<int:pk>/delete/", delete_book, name="delete_book"),
+    path("books/add_book/", add_book, name="add_book"),
+    path("books/<int:pk>/edit_book/", edit_book, name="edit_book"),
+    path("books/<int:pk>/delete_book/", delete_book, name="delete_book"),
     path("all_books/", list_books, name="all_books"),
     path(
         "library_detail/<slug:slug>/",
