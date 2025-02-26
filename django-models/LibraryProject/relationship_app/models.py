@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.text import slugify
 from django.contrib.auth.models import User
-
+from django.contrib.auth.models import Group
 
 # Create your models here.
 class Author(models.Model):
@@ -16,7 +16,11 @@ class Book(models.Model):
     author = models.ForeignKey(Author, related_name="books", on_delete=models.CASCADE)
 
     class Meta():
-        ...
+        permissions = [
+            ("can_add_book", "Can add books"),
+            ("can_change_book","Can edit books"),
+            ("can_delete_book", "Can delete books"),
+        ]
 
     def __str__(self):
         return self.title
