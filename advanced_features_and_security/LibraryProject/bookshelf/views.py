@@ -3,6 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.decorators import permission_required
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
 from bookshelf.models import Book
+from .forms import ExampleForm
 
 def index (request):
     return HttpResponse('welcome to bookshelf')
