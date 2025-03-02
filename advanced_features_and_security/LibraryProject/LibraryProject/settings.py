@@ -30,6 +30,15 @@ SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = 'DENY'  # Prevent the site from being framed (or use 'SAMEORIGIN' if needed)
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
+# Redirect all non-HTTPS requests to HTTPS
+SECURE_SSL_REDIRECT = True
+
+# HTTP Strict Transport Security (HSTS) settings:
+# Instruct browsers to only access your site via HTTPS for the next year (31536000 seconds)
+SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # Apply HSTS to all subdomains
+SECURE_HSTS_PRELOAD = True            # Allow your domain to be preloaded by browsers
+
 # Cookie security: ensure cookies are only sent over HTTPS
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True

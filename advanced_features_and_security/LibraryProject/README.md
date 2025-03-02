@@ -17,3 +17,10 @@ Usage in Views:
     @permission_required('bookshelf.can_edit', raise_exception=True)
     def edit_Book(request, pk):
         ...
+
+
+Security Settings:
+- DEBUG is set to False in production to prevent sensitive error information from being exposed.
+- SECURE_BROWSER_XSS_FILTER, X_FRAME_OPTIONS, and SECURE_CONTENT_TYPE_NOSNIFF provide additional browser-side protections.
+- CSRF_COOKIE_SECURE and SESSION_COOKIE_SECURE ensure cookies are sent only over HTTPS.
+
