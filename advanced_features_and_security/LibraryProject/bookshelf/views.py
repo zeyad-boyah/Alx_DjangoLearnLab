@@ -7,6 +7,10 @@ from bookshelf.models import Book
 def index (request):
     return HttpResponse('welcome to bookshelf')
 
+def book_list(request):
+    books = Book.objects.all()
+    return render(request, 'bookshelf/book_list.html', {'books': books})
+
 
 def setup_groups():
     content_type = ContentType.objects.get_for_model(Book)
