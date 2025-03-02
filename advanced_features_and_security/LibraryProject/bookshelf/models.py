@@ -8,7 +8,7 @@ class Book(models.Model):
 
     def __str__(self):
         return self.title
-
+    
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, date_of_birth, password=None, **extra_fields):
         if not email:
@@ -30,8 +30,7 @@ class CustomUserManager(BaseUserManager):
 
         return self.create_user(email, date_of_birth, password, **extra_fields)
 
-
-class CustomUser (AbstractUser):
+class CustomUser(AbstractUser):
     date_of_birth = models.DateField()
     profile_photo = models.ImageField()
 
