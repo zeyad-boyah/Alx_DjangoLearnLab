@@ -1,5 +1,5 @@
 from rest_framework import generics
-from api.serializers import BookSerializer
+from .serializers import BookSerializer
 from api.models import Book
 
 
