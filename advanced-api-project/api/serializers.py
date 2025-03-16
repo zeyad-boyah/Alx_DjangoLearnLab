@@ -18,7 +18,7 @@ class BookSerializer(serializers.ModelSerializer):
     
 class AuthorSerializer(serializers.ModelSerializer):
     # this is made to return all instances of books related to an instance of author
-    books = BookSerializer(many=True)
+    books = BookSerializer(many=True, read_only=True)
     class Meta:
         model = Author
         fields = ["name", "books"]
