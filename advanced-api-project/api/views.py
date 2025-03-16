@@ -47,3 +47,8 @@ class BookDeleteView(generics.DestroyAPIView):
     serializer_class = BookSerializer
     lookup_field = "pk"
     permission_classes = [IsAuthenticated]
+
+
+class AuthorBookListview(generics.ListAPIView):
+    queryset = Author.objects.all()
+    serializer_class = AuthorSerializer
