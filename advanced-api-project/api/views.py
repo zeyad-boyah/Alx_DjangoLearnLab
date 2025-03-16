@@ -1,10 +1,10 @@
 from django.shortcuts import render
-from rest_framework import generics
+from rest_framework import generics, filters
 from api.models import Book, Author
 from api.serializers import BookSerializer, AuthorSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from django_filters import rest_framework
-from rest_framework.filters import SearchFilter, OrderingFilter
+
 
 
 # api to list all books
@@ -12,7 +12,7 @@ class BookListView(generics.ListAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
-    filter_backends = [rest_framework.DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filter_backends = [rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     # For filtering by publication_year or other exact matches:
     filterset_fields = ['publication_year']
     # For text searches on title and the related author's name:
