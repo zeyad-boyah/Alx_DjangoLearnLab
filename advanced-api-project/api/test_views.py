@@ -7,7 +7,7 @@ from datetime import datetime
 
 class BookAPITests(APITestCase):
     def setUp(self):
-        # Create a test user for endpoints that require authentication.
+        # Create a test user.
         self.user = User.objects.create_user(username='testuser', password='testpass')
         # Create an author instance.
         self.author = Author.objects.create(name='Author One')
@@ -26,6 +26,7 @@ class BookAPITests(APITestCase):
 
     def test_create_book_without_authentication(self):
         """Test that unauthenticated users cannot create a book."""
+        self.client.logout()  # Ensure no user is logged in.
         url = reverse('Create a book', kwargs={'pk': self.author.pk})
         data = {
             'title': 'Book Three',
@@ -33,12 +34,12 @@ class BookAPITests(APITestCase):
             'author': self.author.pk
         }
         response = self.client.post(url, data)
-        # Depending on your permissions, this should be forbidden.
+        # This should be forbidden if authentication is required.
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_create_book_with_authentication(self):
         """Test creating a book with proper authentication."""
-        self.client.force_authenticate(user=self.user)
+        self.client.login(username='testuser', password='testpass')
         url = reverse('Create a book', kwargs={'pk': self.author.pk})
         data = {
             'title': 'Book Three',
@@ -52,7 +53,7 @@ class BookAPITests(APITestCase):
 
     def test_update_book(self):
         """Test updating an existing book."""
-        self.client.force_authenticate(user=self.user)
+        self.client.login(username='testuser', password='testpass')
         url = reverse('Update a book', kwargs={'pk': self.book1.pk})
         data = {
             'title': 'Book One Updated',
@@ -66,7 +67,7 @@ class BookAPITests(APITestCase):
 
     def test_delete_book(self):
         """Test deleting a book."""
-        self.client.force_authenticate(user=self.user)
+        self.client.login(username='testuser', password='testpass')
         url = reverse('Delete a book', kwargs={'pk': self.book1.pk})
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
@@ -85,7 +86,7 @@ class BookAPITests(APITestCase):
         url = reverse('all books')
         response = self.client.get(url, {'search': 'One'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # Instead of checking for an exact count, ensure 'Book One' appears in the results.
+        # Ensure 'Book One' appears in the search results.
         titles = [book['title'] for book in response.data]
         self.assertIn('Book One', titles)
 
@@ -100,7 +101,7 @@ class BookAPITests(APITestCase):
 
     def test_create_book_future_publication_year(self):
         """Test validation for a future publication year."""
-        self.client.force_authenticate(user=self.user)
+        self.client.login(username='testuser', password='testpass')
         url = reverse('Create a book', kwargs={'pk': self.author.pk})
         future_year = datetime.now().year + 1
         data = {
