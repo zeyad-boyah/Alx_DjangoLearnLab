@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework import generics
 from api.models import Book, Author
 from api.serializers import BookSerializer, AuthorSerializer
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 
 # api to list all books
@@ -21,18 +21,18 @@ class BookCreateView(generics.CreateAPIView ):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     lookup_field = "pk"
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 # to update a book with a Put request while logged in 
 class BookUpdateView(generics.UpdateAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     lookup_field = "pk"
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 # to delete  a book with pk while logged 
 class BookDeleteView(generics.DestroyAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     lookup_field = "pk"
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
