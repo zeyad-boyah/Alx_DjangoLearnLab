@@ -9,6 +9,7 @@ class BookSerializer(serializers.ModelSerializer):
         fields = "__all__"
     
     def validate(self, data):
+        # use the .get() on data since this is a dict with attributes of the book instance
         publication_year = data.get('publication_year')
         current_year = datetime.now().year
         if publication_year and publication_year > current_year:
@@ -16,6 +17,7 @@ class BookSerializer(serializers.ModelSerializer):
         return data
     
 class AuthorSerializer(serializers.ModelSerializer):
+    # this is made to return all instances of books related to an instance of author
     books = BookSerializer(many=True)
     class Meta:
         model = Author
