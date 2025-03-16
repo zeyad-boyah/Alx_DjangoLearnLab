@@ -3,6 +3,8 @@ from rest_framework import generics
 from api.models import Book, Author
 from api.serializers import BookSerializer, AuthorSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter
 
 
 # api to list all books
@@ -10,6 +12,11 @@ class BookListView(generics.ListAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    # For filtering by publication_year or other exact matches:
+    filterset_fields = ['publication_year']
+    # For text searches on title and the related author's name:
+    search_fields = ['title', 'author__name']
 
 # to look up a specific book with primary key in the slug like /books/pk/
 class BookDetailView(generics.RetrieveAPIView):

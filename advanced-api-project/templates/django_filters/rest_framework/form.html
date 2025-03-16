@@ -1,0 +1,6 @@
+{% if filter.form %}
+  <form method="get">
+    {{ filter.form.as_p }}
+    <button type="submit">Filter</button>
+  </form>
+{% endif %}
