@@ -1,0 +1,18 @@
+{% extends 'blog/base.html' %}
+{% block title %}Blog Posts - Django Blog{% endblock %}
+
+{% block content %}
+<h2>All Blog Posts</h2>
+{% for post in posts %}
+  <div class="post-snippet">
+    <h3><a href="{% url 'post-detail' post.pk %}">{{ post.title }}</a></h3>
+    <p>{{ post.content|truncatewords:30 }}</p>
+    <small>By {{ post.author }} on {{ post.created_at|date:"M d, Y" }}</small>
+  </div>
+{% empty %}
+  <p>No posts available.</p>
+{% endfor %}
+{% if user.is_authenticated %}
+  <p><a href="{% url 'post-create' %}">Create a new post</a></p>
+{% endif %}
+{% endblock %}

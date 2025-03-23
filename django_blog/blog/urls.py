@@ -11,4 +11,8 @@ urlpatterns = [
     # Custom registration and profile management views
     path('register/', views.register, name='register'),
     path('profile/', views.profile, name='profile'),
+
+    # post viewsssss
+    path('posts/<int:pk>/', views.PostDetailView.as_view(), name='post-detail'),
+    path('posts/', views.PostListView.as_view(), name='post-list'),
 ]
