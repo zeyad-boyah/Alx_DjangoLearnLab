@@ -1,11 +1,14 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, PostForm
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserChangeForm
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from models import Post
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from .models import Post
+from django.urls import reverse_lazy
+
 
 def register(request):
     if request.method == "POST":
@@ -48,3 +51,40 @@ class PostDetailView(DetailView):
     model = Post
     template_name = 'blog/post_detail.html'
 
+# Create a new post (only for logged-in users)
+class PostCreateView(LoginRequiredMixin, CreateView):
+    model = Post
+    form_class = PostForm
+    template_name = 'blog/post_form.html'
+    
+    def form_valid(self, form):
+        # Set the current user as the author before saving ( :< )
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+# Update an existing post (only the author can edit)
+class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Post
+    form_class = PostForm
+    template_name = 'blog/post_form.html'
+
+    def form_valid(self, form):
+        # Ensure the post author remains the same
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+    
+    # make a test to see if the editor is indeed the author 
+    def test_func(self):
+        post = self.get_object()
+        return self.request.user == post.author
+    
+# Delete a post (only the author can delete)
+class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Post
+    template_name = 'blog/post_confirm_delete.html'
+    success_url = reverse_lazy('post-list')
+    
+    # make a test to see if the editor is indeed the author 
+    def test_func(self):
+        post = self.get_object()
+        return self.request.user == post.author
