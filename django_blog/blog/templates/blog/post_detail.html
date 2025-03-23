@@ -1,18 +1,39 @@
 {% extends 'blog/base.html' %}
+
 {% block title %}{{ object.title }} - Django Blog{% endblock %}
 
 {% block content %}
 <article>
     <h2>{{ object.title }}</h2>
     <p>{{ object.content }}</p>
-    <small>By {{ object.author }} on {{ object.created_at|date:"M d, Y" }}</small>
+    <small>By {{ object.author }} on {{ object.published_date|date:"M d, Y" }}</small>
 </article>
 
-{% if user == object.author %}
-    <p>
-        <a href="{% url 'post-update' object.pk %}">Edit</a> |
-        <a href="{% url 'post-delete' object.pk %}">Delete</a>
-    </p>
+<hr>
+
+<h3>Comments</h3>
+{% for comment in object.comments.all %}
+  <div class="comment">
+    <p>{{ comment.content }}</p>
+    <small>By {{ comment.author }} on {{ comment.created_at|date:"M d, Y H:i" }}</small>
+    {% if user == comment.author %}
+      <a href="{% url 'comment-update' comment.pk %}">Edit</a>
+      <a href="{% url 'comment-delete' comment.pk %}">Delete</a>
+    {% endif %}
+  </div>
+{% empty %}
+  <p>No comments yet.</p>
+{% endfor %}
+
+{% if user.is_authenticated %}
+  <hr>
+  <h3>Add a Comment</h3>
+  <form action="{% url 'comment-create' object.id %}" method="post">
+    {% csrf_token %}
+    {{ comment_form.as_p }}
+    <button type="submit">Post Comment</button>
+  </form>
+{% else %}
+  <p><a href="{% url 'login' %}">Login</a> to post a comment.</p>
 {% endif %}
-<p><a href="{% url 'post-list' %}">Back to all posts</a></p>
 {% endblock %}
