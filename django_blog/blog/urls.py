@@ -5,7 +5,7 @@ from . import views
 
 urlpatterns = [
     # Authentication URLs from django default
-    path('login/', auth_views.LoginView.as_view(template_name='auth/login.html'), name='login'),
+    path('login/', auth_views.LoginView.as_view(template_name='blog/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
     
     # Custom registration and profile management views

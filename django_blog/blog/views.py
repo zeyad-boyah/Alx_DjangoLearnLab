@@ -16,7 +16,7 @@ def register(request):
             messages.error(request, "Registration failed. Please correct the errors below.")
     else:
         form = CustomUserCreationForm()
-    return render(request, "auth/register.html", {"form": form})
+    return render(request, "blog/register.html", {"form": form})
 
 
 @login_required
@@ -33,4 +33,4 @@ def profile(request):
     else:
         # Optionally, restrict the fields shown by using a custom form or a subset of fields.
         form = UserChangeForm(instance=request.user)
-    return render(request, "auth/profile.html", {"form": form})
+    return render(request, "blog/profile.html", {"form": form})
