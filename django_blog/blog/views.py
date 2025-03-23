@@ -107,6 +107,12 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
         form.instance.post = get_object_or_404(Post, pk=self.kwargs.get('post_id'))
         return super().form_valid(form)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Add the post object to the context for template usage
+        context['post'] = get_object_or_404(Post, pk=self.kwargs.get('pk'))
+        return context
+
     def get_success_url(self):
         # Redirect to the post detail view after the comment is created
         return reverse('post-detail', kwargs={'pk': self.object.post.id})
