@@ -10,7 +10,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
     )
     password2 = serializers.CharField(write_only=True, required=True)
     email = serializers.EmailField(required=True)
-
+    # serializers.CharField()
     class Meta:
         model = User
         fields = ('username', 'email', 'password', 'password2')
