@@ -6,6 +6,7 @@ from .models import Post, Comment
 User = get_user_model()
 
 class CommentSerializer (serializers.ModelSerializer):
+    # StringRelatedField will use the __str__ of the model and in the case the str of user model is the username
     author = serializers.StringRelatedField()
     class Meta:
         model = Comment
@@ -13,10 +14,16 @@ class CommentSerializer (serializers.ModelSerializer):
         read_only_fields = ["author", "post"]
 
 
-class PostSerializer(serializers.ModelSerializer):
+class PostReadSerializer(serializers.ModelSerializer):
     author = serializers.StringRelatedField()
     comments = CommentSerializer(many=True)
     class Meta:
         model = Post
         fields = ("author","title", "content","created_at","updated_at", "comments")
         read_only_fields = ["author"]
+
+class PostWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = ["title", "content"]
+
