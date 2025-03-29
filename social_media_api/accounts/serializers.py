@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model, password_validation
+from rest_framework.authtoken.models import Token
 
 User = get_user_model()
 
@@ -28,7 +29,8 @@ class RegistrationSerializer(serializers.ModelSerializer):
     # remove password2 as it is no longer needed
     def create(self, validated_data):
         validated_data.pop("password2")  # Remove the password confirmation field
-        user = User.objects.create_user(**validated_data)  # Create user
+        user = get_user_model().objects.create_user(**validated_data)  # Create user
+        Token.objects.create(user=user)
         return user
 
 

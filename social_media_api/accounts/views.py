@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model, authenticate
 from .serializers import RegistrationSerializer, LoginSerializer, ProfileSerializer
 
 
-User = get_user_model ()
+User = get_user_model()
 
 class RegistrationAPIView(generics.CreateAPIView):
     serializer_class = RegistrationSerializer
@@ -17,8 +17,8 @@ class RegistrationAPIView(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         # call create() method in the serializer and save the user
         user = serializer.save()
-        # provide a token for the new user
-        token, _ = Token.objects.get_or_create(user=user)
+        # get the token made in the serializer
+        token= Token.objects.get(user=user)
 
         return Response({
             "user": serializer.data,
