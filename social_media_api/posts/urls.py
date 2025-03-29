@@ -1,6 +1,6 @@
 from django.urls import path
-# from .views import 
+from . import views
 
-# urlpatterns = [
-#     path("posts/", )
-# ]
+urlpatterns = [
+    path("posts/", views.PostListAPIView.as_view(), name="List Post")
+]
