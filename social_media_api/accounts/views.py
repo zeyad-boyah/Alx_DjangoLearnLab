@@ -1,9 +1,9 @@
-from rest_framework import generics, status
+from rest_framework import generics, status, permissions
 from rest_framework.views import APIView 
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import get_user_model, authenticate
-from .serializers import RegistrationSerializer, LoginSerializer
+from .serializers import RegistrationSerializer, LoginSerializer, ProfileSerializer
 
 
 User = get_user_model ()
@@ -40,3 +40,10 @@ class LoginAPIView(APIView):
         return Response({"error": "Invalid Credentials"}, status=status.HTTP_400_BAD_REQUEST)
 
 
+class ProfileView(generics.RetrieveUpdateAPIView):
+    serializer_class = ProfileSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        # Return the currently authenticated user
+        return self.request.user

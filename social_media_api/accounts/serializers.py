@@ -38,3 +38,8 @@ class LoginSerializer(serializers.Serializer):
     # use email for authentication
     email = serializers.EmailField(required=True)
     password = serializers.CharField(write_only=True)
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'bio', 'profile_picture']
