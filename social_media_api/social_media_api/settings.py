@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-aju186#f^bj0ldv8a^*+ra6)r7klv$6oj62)chzq7$19*0st5b"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -140,3 +140,30 @@ import os
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+""" TODO
+this will be edited once i get a domain
+
+ALLOWED_HOSTS = ['mydomain.com', 'www.mydomain.com']
+
+gunicorn your_project_name.wsgi:application --bind 0.0.0.0:$PORT
+
+
+
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = 'DENY'
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_SSL_REDIRECT = True  # Redirect HTTP to HTTPS
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'my_db_name',
+        'USER': 'my_db_user',
+        'PASSWORD': 'my_db_password',
+        'HOST': 'my_db_host',
+        'PORT': 'my_db_port',
+    }
+}
+"""
