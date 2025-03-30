@@ -5,27 +5,23 @@ from .models import Post, Comment
 
 User = get_user_model()
 
-class CommentSerializer (serializers.ModelSerializer):
-    # StringRelatedField will use the __str__ of the model and in the case the str of user model is the username
-    author = serializers.StringRelatedField()
-
+class CommentSerializer(serializers.ModelSerializer):
+    author = serializers.StringRelatedField(read_only=True)
     post_title = serializers.CharField(source='post.title', read_only=True)
+
     class Meta:
         model = Comment
-        fields = ("author", "content","created_at","updated_at", "post", "post_title")
-        read_only_fields = ["author", "post", "created_at"]
+        fields = ("id", "author", "content", "created_at", "updated_at", "post", "post_title")
+        read_only_fields = ["author", "created_at", "post_title"]
 
 
-class PostReadSerializer(serializers.ModelSerializer):
+
+
+class PostSerializer(serializers.ModelSerializer):
     author = serializers.StringRelatedField()
-    comments = CommentSerializer(many=True)
+    comments = CommentSerializer(many=True, read_only=True)
     class Meta:
         model = Post
-        fields = ("author","title", "content","created_at","updated_at", "comments")
-        read_only_fields = ["author"]
-
-class PostWriteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Post
-        fields = ["title", "content"]
+        fields = ("id", "author", "title", "content", "created_at", "updated_at", "comments")
+        read_only_fields = ["author", "created_at", "updated_at", "comments"]
 

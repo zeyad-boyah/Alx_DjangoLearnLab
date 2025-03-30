@@ -1,95 +1,44 @@
-from django.shortcuts import render
-from .serializers import PostReadSerializer, PostWriteSerializer, CommentSerializer
+from rest_framework.permissions import SAFE_METHODS
+from .serializers import PostSerializer, CommentSerializer
 from .models import Post, Comment
-from rest_framework import generics, permissions, mixins
+from rest_framework import viewsets, permissions
 from django.shortcuts import get_object_or_404
 
 
+# Custom permission: allow read-only access to everyone, but only allow editing/deleting if the user is the owner.
+class IsOwnerOrReadOnly(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        # Allow safe methods for any request.
+        if request.method in SAFE_METHODS:
+            return True
+        # Write permissions are only allowed to the owner of the object.
+        return obj.author == request.user
 
-# list all posts including their comments
-class PostListAPIView(generics.ListAPIView):
+
+class PostViewSet(viewsets.ModelViewSet):
+    """
+    A viewset for CRUD operations on posts.
+    - List, retrieve, create, update, delete posts.
+    - Only the owner can update or delete a post.
+    """
     queryset = Post.objects.all()
-    serializer_class = PostReadSerializer
+    serializer_class = PostSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
-# list all posts made by the authenticated user
-class MyPostListAPIView(generics.ListAPIView):
-    queryset = Post.objects.all()
-    serializer_class = PostReadSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_queryset(self):
-        user = self.request.user
-        return Post.objects.filter(author=user)
-
-
-# create a Post with a login token
-class PostCreateAPIView(generics.CreateAPIView):
-    queryset = Post.objects.all()
-    serializer_class = PostWriteSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    # make it so that the author is the owner of the token
     def perform_create(self, serializer):
+        # Automatically set the author to the current user on creation.
         serializer.save(author=self.request.user)
 
-
-# while authorized retrieve a post made by the user, update or delete them
-class PostRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Post.objects.all()
-    serializer_class = PostWriteSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    # make sure that the user can do all of this to his own posts only
-    def get_queryset(self):
-        user = self.request.user
-        return Post.objects.filter(author=user)
-    
-
-# retrieve all comments for a post
-class CommentOnlyListForPostAPIView(generics.ListAPIView):
-    queryset = Comment.objects.all()
-    serializer_class= CommentSerializer
-
-    def get_queryset(self):
-        post_pk = self.kwargs.get('post_pk')
-        return Comment.objects.filter(post_id=post_pk)
-
-
-# create a comment for only the provided post
-class CommentCreateAPIView(generics.CreateAPIView):
+class CommentViewSet(viewsets.ModelViewSet):
+    """
+    A viewset for CRUD operations on comments.
+    - List, retrieve, create, update, delete comments.
+    - Only the owner of the comment can update or delete it.
+    """
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
     def perform_create(self, serializer):
-        # Get the post_pk from the URL kwargs.
-        post_pk = self.kwargs.get('post_pk')
-        # Retrieve the Post instance or return a 404 if not found.
-        post = get_object_or_404(Post, pk=post_pk)
-        # Save the comment with the given post and current user as the author.
-        serializer.save(post=post, author=self.request.user)
-
-
-# update/delete specific comments
-class CommentUpdateDeleteAPIView(mixins.UpdateModelMixin, 
-                                 mixins.DestroyModelMixin, 
-                                 generics.GenericAPIView):
-    queryset= Comment.objects.all()
-    serializer_class = CommentSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_queryset(self):
-        user = self.request.user
-        return Comment.objects.filter(author=user)
-
-    def put(self, request, *args, **kwargs):
-        # Handle full update
-        return self.update(request, *args, **kwargs)
-
-    def patch(self, request, *args, **kwargs):
-        # Handle partial update
-        return self.partial_update(request, *args, **kwargs)
-
-    def delete(self, request, *args, **kwargs):
-        # Handle delete
-        return self.destroy(request, *args, **kwargs)
-    
+        # Automatically set the author to the current user on creation.
+        serializer.save(author=self.request.user)
