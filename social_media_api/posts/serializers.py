@@ -8,9 +8,11 @@ User = get_user_model()
 class CommentSerializer (serializers.ModelSerializer):
     # StringRelatedField will use the __str__ of the model and in the case the str of user model is the username
     author = serializers.StringRelatedField()
+
+    post_title = serializers.CharField(source='post.title', read_only=True)
     class Meta:
         model = Comment
-        fields = ("author", "content","created_at","updated_at", "post")
+        fields = ("author", "content","created_at","updated_at", "post", "post_title")
         read_only_fields = ["author", "post", "created_at"]
 
 

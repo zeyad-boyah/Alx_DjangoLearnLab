@@ -2,6 +2,7 @@ from django.shortcuts import render
 from .serializers import PostReadSerializer, PostWriteSerializer, CommentSerializer
 from .models import Post, Comment
 from rest_framework import generics, permissions, mixins
+from django.shortcuts import get_object_or_404
 
 
 
@@ -51,7 +52,21 @@ class CommentOnlyListForPostAPIView(generics.ListAPIView):
     def get_queryset(self):
         post_pk = self.kwargs.get('pk')
         return Comment.objects.filter(post=post_pk)
-    
+
+# create a comment for only the provided post
+class CommentCreateAPIView(generics.CreateAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        # Get the post_pk from the URL kwargs.
+        post_pk = self.kwargs.get('pk')
+        # Retrieve the Post instance or return a 404 if not found.
+        post = get_object_or_404(Post, pk=post_pk)
+        # Save the comment with the given post and current user as the author.
+        serializer.save(post=post, author=self.request.user)
+
 
 # update/delete specific comments
 class CommentUpdateDeleteAPIView(mixins.UpdateModelMixin, 
