@@ -1,7 +1,7 @@
 from rest_framework.permissions import SAFE_METHODS
 from .serializers import PostSerializer, CommentSerializer
 from .models import Post, Comment
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, generics
 
 
 # Custom permission: allow read-only access to everyone, but only allow editing/deleting if the user is the owner.
@@ -41,3 +41,17 @@ class CommentViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         # Automatically set the author to the current user on creation.
         serializer.save(author=self.request.user)
+
+'''
+generate a feed based on the posts from users that the current user follows.
+This view should return posts ordered by creation date, showing the most recent posts at the top.
+'''
+class UserFeed(generics.ListAPIView):
+    serializer_class= PostSerializer
+    permission_classes= [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        # Get all users the current user is following.
+        following_users = self.request.user.following.all()
+        #  Return posts where the author is in the following list, ordered by creation date
+        return Post.objects.filter(author__in=following_users).order_by('-created_at')
