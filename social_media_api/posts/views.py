@@ -2,7 +2,6 @@ from rest_framework.permissions import SAFE_METHODS
 from .serializers import PostSerializer, CommentSerializer
 from .models import Post, Comment
 from rest_framework import viewsets, permissions
-from django.shortcuts import get_object_or_404
 
 
 # Custom permission: allow read-only access to everyone, but only allow editing/deleting if the user is the owner.
