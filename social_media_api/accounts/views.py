@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model, authenticate
 from .serializers import RegistrationSerializer, LoginSerializer, ProfileSerializer
 from django.shortcuts import get_object_or_404
 
-
+# could use CustomUser.objects.all() from the models but i choose the less confusing way :sadge:
 User = get_user_model()
 
 class RegistrationAPIView(generics.CreateAPIView):
@@ -80,3 +80,24 @@ class FollowUserAPIView(generics.GenericAPIView):
             {"detail": f"You are now following {user_to_follow.username}."},
             status=status.HTTP_200_OK,
         )
+    
+class UnFollowUserAPIView(generics.GenericAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = User.objects.all()
+
+    def post(self, request, pk, *args, **kwargs):
+        user_to_unfollow= get_object_or_404(self.get_queryset(), pk=pk)
+        current_user = request.user
+
+        # check if user is actually following 
+        if current_user.following.filter(pk=user_to_unfollow.pk).exists():
+            current_user.following.remove(user_to_unfollow)
+            return Response(
+                {"detail": f"You have now unfollowed {user_to_unfollow.username}."},
+                status=status.HTTP_200_OK,
+            )
+        else:
+            return Response(
+                {"detail": "You are not following this user."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
