@@ -58,29 +58,52 @@ class UserFeed(generics.ListAPIView):
         #  Return posts where the author is in the following list, ordered by creation date
         return Post.objects.filter(author__in=following_users).order_by('-created_at')
     
-class PostLikeUnlikeAPIView(generics.GenericAPIView):
+class PostLikeAPIView(generics.GenericAPIView):
     queryset = Post.objects.all()
     serializer_class = LikeSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
-        post_pk = kwargs.get("post_pk")
+        # get primary key from slug
+        post_pk = kwargs.get("pk")
         user = request.user
-        
+        # Retrieve the post instance using the primary key
         post_instance = get_object_or_404(Post, pk=post_pk) 
+        # Check if the post is already liked by the user
+        if Like.objects.filter(post=post_instance, user=user).exists():
+            return Response(
+                {"detail": "Post already liked."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Create a new like
+        Like.objects.create(post=post_instance, user=user)
+        return Response(
+            {"action": "Like", "post": post_instance.title},
+            status=status.HTTP_201_CREATED
+        )
+    
+class PostUnlikeAPIView(generics.GenericAPIView):
+    queryset = Post.objects.all()
+    serializer_class = LikeSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        post_pk = kwargs.get("pk")
+        user = request.user
+        post_instance = get_object_or_404(Post, pk=post_pk)
+        
+        # Check if a like exists for this user and post
         like_instance = Like.objects.filter(post=post_instance, user=user).first()
-
-
-
-        if like_instance:
-            like_instance.delete()
-            return Response({
-                "action":"Unlike",
-                "post" : post_instance.title
-            }, status=status.HTTP_201_CREATED)
-        else:
-            Like.objects.create(post=post_instance, user=user)
-            return Response({
-                "action":"like",
-                "post" : post_instance.title
-            }, status=status.HTTP_200_OK)
+        if not like_instance:
+            return Response(
+                {"detail": "Post not liked."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Delete the like instance
+        like_instance.delete()
+        return Response(
+            {"action": "Unlike", "post": post_instance.title},
+            status=status.HTTP_200_OK
+        )
