@@ -1,7 +1,9 @@
 from rest_framework.permissions import SAFE_METHODS
-from .serializers import PostSerializer, CommentSerializer
-from .models import Post, Comment
-from rest_framework import viewsets, permissions, generics
+from .serializers import PostSerializer, CommentSerializer, LikeSerializer
+from .models import Post, Comment, Like
+from rest_framework import viewsets, permissions, generics, status
+from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 
 
 # Custom permission: allow read-only access to everyone, but only allow editing/deleting if the user is the owner.
@@ -55,3 +57,30 @@ class UserFeed(generics.ListAPIView):
         following_users = self.request.user.following.all()
         #  Return posts where the author is in the following list, ordered by creation date
         return Post.objects.filter(author__in=following_users).order_by('-created_at')
+    
+class PostLikeUnlikeAPIView(generics.GenericAPIView):
+    queryset = Post.objects.all()
+    serializer_class = LikeSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        post_pk = kwargs.get("post_pk")
+        user = request.user
+        
+        post_instance = get_object_or_404(Post, pk=post_pk) 
+        like_instance = Like.objects.filter(post=post_instance, user=user).first()
+
+
+
+        if like_instance:
+            like_instance.delete()
+            return Response({
+                "action":"Unlike",
+                "post" : post_instance.title
+            }, status=status.HTTP_201_CREATED)
+        else:
+            Like.objects.create(post=post_instance, user=user)
+            return Response({
+                "action":"like",
+                "post" : post_instance.title
+            }, status=status.HTTP_200_OK)
