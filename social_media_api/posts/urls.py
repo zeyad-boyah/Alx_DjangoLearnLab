@@ -8,4 +8,5 @@ urlpatterns = [
     path("my_post/retrieve/<int:pk>/", views.PostRetrieveUpdateDestroyAPIView.as_view(), name="my specific post retrieve"),
     path("my_post/update/<int:pk>/", views.PostRetrieveUpdateDestroyAPIView.as_view(), name="my specific post Update"),
     path("my_post/delete/<int:pk>/", views.PostRetrieveUpdateDestroyAPIView.as_view(), name="my specific post Delete"),
+    path("post/<int:pk>/comments/", views.CommentOnlyListForPostAPIView.as_view(), name="comments for a post")
 ]

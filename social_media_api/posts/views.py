@@ -37,8 +37,18 @@ class PostRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PostWriteSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    # make sure that the user can do all of this to his own posts only
     def get_queryset(self):
         user = self.request.user
         return Post.objects.filter(author=user)
+    
 
+# retrieve all comments for a post
+class CommentOnlyListForPostAPIView(generics.ListAPIView):
+    queryset = Comment.objects.all()
+    serializer_class= CommentSerializer
+
+    def get_queryset(self):
+        post_pk = self.kwargs.get('pk')
+        return Comment.objects.filter(post=post_pk)
 
