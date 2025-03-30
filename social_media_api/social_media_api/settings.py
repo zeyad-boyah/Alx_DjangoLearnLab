@@ -149,7 +149,7 @@ ALLOWED_HOSTS = ['mydomain.com', 'www.mydomain.com']
 
 gunicorn your_project_name.wsgi:application --bind 0.0.0.0:$PORT
 
-
+STATIC_ROOT
 
 SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = 'DENY'
