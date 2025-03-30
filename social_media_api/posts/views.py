@@ -43,7 +43,7 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         # Automatically set the author to the current user on creation.
-        serializer.save(author=self.request.user)
+        comment = serializer.save(author=self.request.user)
 
         # Generate notification for the comment
         create_comment_notification(actor=self.request.user, post=comment.post)
@@ -116,3 +116,7 @@ class PostUnlikeAPIView(generics.GenericAPIView):
             {"action": "Unlike", "post": post_instance.title},
             status=status.HTTP_200_OK
         )
+    
+"""
+"generics.get_object_or_404(Post, pk=pk)", "Like.objects.get_or_create(user=request.user, post=post)", "Notification.objects.create"
+"""
