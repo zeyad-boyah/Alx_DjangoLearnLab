@@ -15,7 +15,3 @@ urlpatterns = [
 ]
 
 
-""" TODO
-Routing Configuration:
-Add URL patterns in posts/urls.py for liking and unliking posts, such as /posts/<int:pk>/like/ and /posts/<int:pk>/unlike/.
-"""
