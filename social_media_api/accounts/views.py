@@ -5,6 +5,7 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth import get_user_model, authenticate
 from .serializers import RegistrationSerializer, LoginSerializer, ProfileSerializer
 from django.shortcuts import get_object_or_404
+from notifications.views import create_follower_notification
 
 # could use CustomUser.objects.all() from the models but i choose the less confusing way :sadge:
 User = get_user_model()
@@ -76,6 +77,9 @@ class FollowUserAPIView(generics.GenericAPIView):
         
         # add the user to following list
         current_user.following.add(user_to_follow)
+
+        # Create a notification for the follow action
+        create_follower_notification(actor=current_user, user=user_to_follow)
 
         return Response(
             {"detail": f"You are now following {user_to_follow.username}."},

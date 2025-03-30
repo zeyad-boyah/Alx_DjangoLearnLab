@@ -4,6 +4,7 @@ from .models import Post, Comment, Like
 from rest_framework import viewsets, permissions, generics, status
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
+from notifications.views import create_comment_notification, create_like_notification
 
 
 # Custom permission: allow read-only access to everyone, but only allow editing/deleting if the user is the owner.
@@ -44,6 +45,9 @@ class CommentViewSet(viewsets.ModelViewSet):
         # Automatically set the author to the current user on creation.
         serializer.save(author=self.request.user)
 
+        # Generate notification for the comment
+        create_comment_notification(actor=self.request.user, post=comment.post)
+
 '''
 generate a feed based on the posts from users that the current user follows.
 This view should return posts ordered by creation date, showing the most recent posts at the top.
@@ -78,6 +82,10 @@ class PostLikeAPIView(generics.GenericAPIView):
         
         # Create a new like
         Like.objects.create(post=post_instance, user=user)
+
+        # Generate notification for the like
+        create_like_notification(actor=user, post=post_instance)
+
         return Response(
             {"action": "Like", "post": post_instance.title},
             status=status.HTTP_201_CREATED
