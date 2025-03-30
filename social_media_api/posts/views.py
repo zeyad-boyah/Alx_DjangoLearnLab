@@ -85,7 +85,8 @@ class PostLikeAPIView(generics.GenericAPIView):
     
 class PostUnlikeAPIView(generics.GenericAPIView):
     queryset = Post.objects.all()
-    serializer_class = LikeSerializer
+    
+    # serializer_class = LikeSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
