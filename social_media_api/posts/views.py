@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from .serializers import PostReadSerializer, PostWriteSerializer, CommentSerializer
 from .models import Post, Comment
-from rest_framework import generics, permissions
-from django.contrib.auth.mixins import LoginRequiredMixin
+from rest_framework import generics, permissions, mixins
+
 
 
 # list all posts including their comments
@@ -51,4 +51,29 @@ class CommentOnlyListForPostAPIView(generics.ListAPIView):
     def get_queryset(self):
         post_pk = self.kwargs.get('pk')
         return Comment.objects.filter(post=post_pk)
+    
 
+# update/delete specific comments
+class CommentUpdateDeleteAPIView(mixins.UpdateModelMixin, 
+                                 mixins.DestroyModelMixin, 
+                                 generics.GenericAPIView):
+    queryset= Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return Comment.objects.filter(author=user)
+
+    def put(self, request, *args, **kwargs):
+        # Handle full update
+        return self.update(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        # Handle partial update
+        return self.partial_update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        # Handle delete
+        return self.destroy(request, *args, **kwargs)
+    
