@@ -50,8 +50,9 @@ class CommentOnlyListForPostAPIView(generics.ListAPIView):
     serializer_class= CommentSerializer
 
     def get_queryset(self):
-        post_pk = self.kwargs.get('pk')
-        return Comment.objects.filter(post=post_pk)
+        post_pk = self.kwargs.get('post_pk')
+        return Comment.objects.filter(post_id=post_pk)
+
 
 # create a comment for only the provided post
 class CommentCreateAPIView(generics.CreateAPIView):
@@ -61,7 +62,7 @@ class CommentCreateAPIView(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         # Get the post_pk from the URL kwargs.
-        post_pk = self.kwargs.get('pk')
+        post_pk = self.kwargs.get('post_pk')
         # Retrieve the Post instance or return a 404 if not found.
         post = get_object_or_404(Post, pk=post_pk)
         # Save the comment with the given post and current user as the author.
