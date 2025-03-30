@@ -32,3 +32,5 @@ class LikeSerializer(serializers.ModelSerializer):
         model = Like
         fields = ('user','post')
 
+
+
