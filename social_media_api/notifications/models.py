@@ -19,3 +19,4 @@ class Notification(models.Model):
     target = GenericForeignKey('target_content_type', 'target_object_id')
     
     timestamp = models.DateTimeField(auto_now_add=True)
+    read = models.BooleanField(default=False)  # To track if notification has been seen
